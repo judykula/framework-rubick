@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="LOG_HOME" source="logging.path" defaultValue="logs"/>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <!--For pattern details you can check this link：https://blog.csdn.net/z69183787/article/details/109321037-->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(---){faint} %clr([%.37t]){faint} %clr(%logger{0}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+
+    <property name="SYNC_LOG_PATTERN" value="%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RunLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/run.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/run.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>50GB</totalSizeCap>
+            <maxFileSize>1GB</maxFileSize>
+        </rollingPolicy>
+        <encoder >
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+    <turboFilter class="com.jwy.rubick.MyFilter" />
+
+    <!--<appender name="ExceptionLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/exception.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/exception.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>50GB</totalSizeCap>
+            <maxFileSize>1GB</maxFileSize>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                        "severity": "%level",
+                        "service": "${springAppName:-}",
+                        "trace": "%X{traceId:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%logger",
+                        "rest": "%message"
+                        }
+                    </pattern>
+                </pattern>
+                <logstashMarkers/>
+                <stackTrace>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                        <maxLength>4096</maxLength>
+                        <shortenedClassNameLength>20</shortenedClassNameLength>
+                        <rootCauseFirst>true</rootCauseFirst>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>-->
+
+</included>
